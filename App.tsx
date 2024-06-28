@@ -1,118 +1,81 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
-import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
+import React,{useState} from 'react';
+import { SafeAreaView,Text,View,StyleSheet,ScrollView,Modal,Pressable,FlatList
 } from 'react-native';
-
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
-
-type SectionProps = PropsWithChildren<{
-  title: string;
-}>;
-
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-}
-
+import Formulario from "./src/components/Formulario";
+import Citas from "./src/components/Citas";
 function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  // Parte de los hooks
+  const [citas,setCitas]= useState([]);
+  const [modalNuevaCita, setModalNuevaCita] = useState(false);
+  const citaEditar=id=>{
+    console.log('editar');
+  }
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <Header />
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+        <View>
+          {/*Asignar la clase de la hoja de estilos*/}
+          <Text style={styles.titulo}>Administrador de citas {''}
+            <Text style={styles.tituloBold}>Veternarias</Text>
+          </Text>
         </View>
+
+        {/*Todo puede estar rodeado de un pressable*/}
+        <Pressable style={styles.botonNuevaCita}>
+          <Text style={styles.textoNuevaCita} onPress={()=>setModalNuevaCita(true)}>Nueva cita</Text>
+        </Pressable>
+
+        {/*Listado de citas*/}
+        {
+          citas.length===0?<Text style={styles.noCitas}>No hay citas registradas</Text>:
+            <FlatList data={citas}  keyExtractor={(item)=>item.id}
+                      renderItem={({item})=>{
+                        return (
+                          <Citas item={item} setModalNuevaCita={setModalNuevaCita} citaEditar={citaEditar} ></Citas>
+                        )
+                      }} ></FlatList>
+        }
+
+        {/*Formulario*/}
+        <Formulario modalNuevaCita={modalNuevaCita} setModalNuevaCita={setModalNuevaCita} citas={citas} setCitas={setCitas}></Formulario>
       </ScrollView>
+
     </SafeAreaView>
   );
 }
 
-const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+// Crear la hoja de estilos
+const styles=StyleSheet.create({
+  container:{
+    backgroundColor:'#f3f4f6',
+    flex:1,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
+  botonNuevaCita:{
+    marginTop:10,
+    marginHorizontal:20,
+    backgroundColor:'#6D28D9',
+    paddingVertical:15,
+    paddingHorizontal:10,
+    borderRadius:10,
   },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
+  textoNuevaCita:{
+    textAlign:'center',
+    fontSize:22,
+    fontWeight:'700',
+    textTransform:'uppercase',
+    color:'#fff'
   },
-  highlight: {
-    fontWeight: '700',
+  titulo:{
+    textAlign:'center',textTransform:'uppercase',fontSize:25,color:'#000',fontWeight:'700',marginTop:10,
   },
+  tituloBold:{
+    color:'#6D28D9',
+  },
+  noCitas:{
+    marginTop:40,
+    textAlign:'center',
+    fontSize:24,
+  }
 });
-
 export default App;
