@@ -16,7 +16,7 @@ const Formulario=(props)=>{
   useEffect(()=>{
   if(Object.keys(citas).length!==0){
     // Hay información de citas para editar
-    // console.log('hay cita a editar');
+    console.log('hay cita a editar');
     setId(cita.id);
     setPaciente(cita.paciente);
     setMascota(cita.mascota)
