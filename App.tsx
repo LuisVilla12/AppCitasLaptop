@@ -7,8 +7,13 @@ function App(): React.JSX.Element {
   // Parte de los hooks
   const [citas,setCitas]= useState([]);
   const [modalNuevaCita, setModalNuevaCita] = useState(false);
+  // cita a editar
+  const [cita, setCita] = useState({});
+
   const citaEditar=id=>{
-    console.log('editar');
+    //Busca en el arreglo de la cita quien tiene ese id
+    const citaEditar=citas.filter(cita=>cita.id === id);
+    setCita(citaEditar[0]);
   }
 
   return (
@@ -32,13 +37,13 @@ function App(): React.JSX.Element {
             <FlatList data={citas}  keyExtractor={(item)=>item.id}
                       renderItem={({item})=>{
                         return (
-                          <Citas item={item} setModalNuevaCita={setModalNuevaCita} citaEditar={citaEditar} ></Citas>
+                          <Citas item={item} setModalNuevaCita={setModalNuevaCita} citaEditar={citaEditar}></Citas>
                         )
                       }} ></FlatList>
         }
 
         {/*Formulario*/}
-        <Formulario modalNuevaCita={modalNuevaCita} setModalNuevaCita={setModalNuevaCita} citas={citas} setCitas={setCitas}></Formulario>
+        <Formulario modalNuevaCita={modalNuevaCita} setModalNuevaCita={setModalNuevaCita} citas={citas} setCitas={setCitas} cita={cita} ></Formulario>
       </ScrollView>
 
     </SafeAreaView>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from "react-native";
 const Citas=({item,setModalNuevaCita,citaEditar})=>{
-  const {paciente,date,mascota}=item;
+  const {paciente,date,mascota,id}=item;
 
   const formatearFecha=fecha=>{
     const nuevaFecha= new Date(fecha);
@@ -23,7 +23,11 @@ const Citas=({item,setModalNuevaCita,citaEditar})=>{
       <Text style={styles.fecha}>{formatearFecha(date)}</Text>
       <View style={styles.contenedorBotones}>
         <Pressable style={[styles.btnEditar,styles.btn]}>
-          <Text style={styles.btnTexto} onLongPress={()=>{citaEditar}setModalNuevaCita(true)}>Editar</Text>
+
+          <Text style={styles.btnTexto} onPress={()=>{
+            citaEditar(id)
+            setModalNuevaCita(true)
+          }}>Editar</Text>
         </Pressable>
         <Pressable style={[styles.btnEliminar,styles.btn]}>
           <Text style={styles.btnTexto}>Eliminar</Text>

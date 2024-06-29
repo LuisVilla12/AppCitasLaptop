@@ -1,15 +1,34 @@
-import React,{useState}  from "react";
+import React,{useState,useEffect}  from "react";
 import { Modal, Pressable, Text, SafeAreaView, StyleSheet, ScrollView, TextInput, View,Alert } from "react-native";
 import DatePicker from 'react-native-date-picker'
 
 const Formulario=(props)=>{
-  const {modalNuevaCita,setModalNuevaCita,citas,setCitas}=props;
+  const {modalNuevaCita,setModalNuevaCita,citas,setCitas,cita}=props;
+
+  const [id,setId]=useState('');
   const [paciente,setPaciente]=useState('');
   const [mascota,setMascota]=useState('');
   const [email,setEmail]=useState('');
   const [telefono,setTelefono]=useState('');
   const [sintomas,setSintomas]=useState('');
   const [date, setDate] = useState(new Date())
+
+  useEffect(()=>{
+  if(Object.keys(citas).length!==0){
+    // Hay información de citas para editar
+    // console.log('hay cita a editar');
+    setId(cita.id);
+    setPaciente(cita.paciente);
+    setMascota(cita.mascota)
+    setEmail(cita.email)
+    setTelefono(cita.telefono)
+    setSintomas(cita.telefono)
+    setDate(cita.date)
+  }else{
+    // No hay información de citas para editar
+    console.log('No hay cita a editar');
+  }
+  },[])
 
   const handleCita= ()=>{
     // Valida que no este vacio
@@ -20,13 +39,14 @@ const Formulario=(props)=>{
     const nuevaCita={
       id:Date.now(),paciente,mascota,email,telefono,sintomas,date
     }
-    // una copia de los pacientes actuales y uno nuevo
     setPaciente('');
     setMascota('')
     setEmail('')
     setTelefono('')
     setSintomas('')
     setDate(new Date())
+    // una copia de los pacientes actuales y uno nuevo
+
     setCitas([...citas,nuevaCita]);
     setModalNuevaCita(false);
   }
