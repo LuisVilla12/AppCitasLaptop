@@ -1,19 +1,43 @@
 import React,{useState} from 'react';
-import { SafeAreaView,Text,View,StyleSheet,ScrollView,Modal,Pressable,FlatList
-} from 'react-native';
+import {
+  SafeAreaView, Text, View, StyleSheet, ScrollView, Modal, Pressable, FlatList, Alert
+} from "react-native";
 import Formulario from "./src/components/Formulario";
 import Citas from "./src/components/Citas";
+import InformacionGeneral from "./src/components/InformacionGeneral";
 function App(): React.JSX.Element {
   // Parte de los hooks
   const [citas,setCitas]= useState([]);
   const [modalNuevaCita, setModalNuevaCita] = useState(false);
   // cita a editar
-  const [cita, setCita] = useState({});
-
+  const [citaActual, setCitaActual] = useState({});
+  const [modalInformacionGeneral, setModalInformacionGeneral] = useState(false);
+  const cerrarNuevaCita=()=>{
+    setModalNuevaCita(false);
+  }
   const citaEditar=id=>{
     //Busca en el arreglo de la cita quien tiene ese id
     const citaEditar=citas.filter(cita=>cita.id === id);
-    setCita(citaEditar[0]);
+    // console.log(citaEditar[0]);
+    // Mandar el objeto que tiene ese id
+    setCitaActual(citaEditar[0]);
+    // console.log('editar',citaEditar[0]);
+  }
+  const eliminarCita=id=>{
+    // const elimiarCita=citas.(cita=>cita.id === id);
+    Alert.alert('¿Quieres eliminar esta cita?','Una cita eliminada no se puede recuperar',[
+      {text:'Cancelar'},{text:'Si eliminar',onPress:()=>{
+          // Extraer todos los que sean difentes
+          const citasSinEliminar=citas.filter(cita=>cita.id !== id);
+          setCitas(citasSinEliminar);
+          console.log('eliminar',id);
+        }}
+    ])
+  }
+  const mostrarInformacion=id=>{
+    setModalInformacionGeneral(true);
+    const citaEditar=citas.filter(cita=>cita.id === id);
+    setCitaActual(citaEditar[0]);
   }
 
   return (
@@ -37,13 +61,18 @@ function App(): React.JSX.Element {
             <FlatList data={citas}  keyExtractor={(item)=>item.id}
                       renderItem={({item})=>{
                         return (
-                          <Citas item={item} setModalNuevaCita={setModalNuevaCita} citaEditar={citaEditar}></Citas>
+                          <Citas item={item} setModalNuevaCita={setModalNuevaCita} setCitaActual={setCitaActual}  citaEditar={citaEditar} eliminarCita={eliminarCita} setModalInformacionGeneral={setModalInformacionGeneral}></Citas>
                         )
                       }} ></FlatList>
         }
+        <Modal visible={modalInformacionGeneral} animationType={'fade'}>
+          <InformacionGeneral setModalInformacionGeneral={setModalInformacionGeneral} citaActual={citaActual}  setCitaActual={setCitaActual} citaActual={citaActual} ></InformacionGeneral>
+        </Modal>
+        {/*Formulario cuando el modal nueva cita sea visible*/}
+        {modalNuevaCita && (
+          <Formulario cerrarNuevaCita={cerrarNuevaCita} modalNuevaCita={modalNuevaCita}  citas={citas} setCitas={setCitas} citaActual={citaActual} setCitaActual={setCitaActual}></Formulario>
+        )}
 
-        {/*Formulario*/}
-        <Formulario modalNuevaCita={modalNuevaCita} setModalNuevaCita={setModalNuevaCita} citas={citas} setCitas={setCitas} cita={cita} ></Formulario>
       </ScrollView>
 
     </SafeAreaView>

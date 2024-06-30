@@ -1,39 +1,32 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from "react-native";
-const Citas=({item,setModalNuevaCita,citaEditar})=>{
+import {formatearFecha} from '../helpers'
+const Citas=({item,setModalNuevaCita,citaEditar,eliminarCita,setModalInformacionGeneral,setCitaActual})=>{
   const {paciente,date,mascota,id}=item;
-
-  const formatearFecha=fecha=>{
-    const nuevaFecha= new Date(fecha);
-    const opciones={
-      hour:'numeric',
-      minute:'numeric',
-      weekday:'long',
-      year:'numeric',
-      month:'long',
-      day:'numeric',
-    }
-    return nuevaFecha.toLocaleDateString('es-ES',opciones)
-  }
-
   return(
+    <Pressable onPress={()=>{
+      setCitaActual(item);
+      setModalInformacionGeneral(true)}
+    } >
     <View style={styles.container}>
       <Text style={styles.labels}>Paciente:</Text>
       <Text style={styles.mascota}>{mascota} <Text style={styles.labels}> ({paciente}) </Text> </Text>
       <Text style={styles.fecha}>{formatearFecha(date)}</Text>
       <View style={styles.contenedorBotones}>
         <Pressable style={[styles.btnEditar,styles.btn]}>
-
           <Text style={styles.btnTexto} onPress={()=>{
             citaEditar(id)
             setModalNuevaCita(true)
           }}>Editar</Text>
         </Pressable>
         <Pressable style={[styles.btnEliminar,styles.btn]}>
-          <Text style={styles.btnTexto}>Eliminar</Text>
+          <Text style={styles.btnTexto} onPress={()=>{
+            eliminarCita(id)
+          }}>Eliminar</Text>
         </Pressable>
       </View>
     </View>
+    </Pressable>
 
   )
 }

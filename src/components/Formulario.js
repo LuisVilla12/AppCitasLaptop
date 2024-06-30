@@ -3,7 +3,7 @@ import { Modal, Pressable, Text, SafeAreaView, StyleSheet, ScrollView, TextInput
 import DatePicker from 'react-native-date-picker'
 
 const Formulario=(props)=>{
-  const {modalNuevaCita,setModalNuevaCita,citas,setCitas,cita}=props;
+  const {cerrarNuevaCita,modalNuevaCita,citas,setCitas,citaActual,setCitaActual}=props;
 
   const [id,setId]=useState('');
   const [paciente,setPaciente]=useState('');
@@ -14,21 +14,21 @@ const Formulario=(props)=>{
   const [date, setDate] = useState(new Date())
 
   useEffect(()=>{
-  if(Object.keys(citas).length!==0){
-    // Hay información de citas para editar
-    console.log('hay cita a editar');
-    setId(cita.id);
-    setPaciente(cita.paciente);
-    setMascota(cita.mascota)
-    setEmail(cita.email)
-    setTelefono(cita.telefono)
-    setSintomas(cita.telefono)
-    setDate(cita.date)
-  }else{
-    // No hay información de citas para editar
-    console.log('No hay cita a editar');
-  }
-  },[])
+    if(Object.keys(citaActual).length>0){
+      console.log(citaActual.paciente);
+      setId(citaActual.id);
+      setPaciente(citaActual.paciente);
+      setMascota(citaActual.mascota)
+      setEmail(citaActual.email)
+      setTelefono(citaActual.telefono)
+      setSintomas(citaActual.sintomas)
+      setDate(citaActual.date);
+      console.log('hay cita a editar');
+    }else{
+      console.log('No hay cita a editar');
+    }
+    }
+  ,[citaActual])
 
   const handleCita= ()=>{
     // Valida que no este vacio
@@ -37,8 +37,26 @@ const Formulario=(props)=>{
       return;
     }
     const nuevaCita={
-      id:Date.now(),paciente,mascota,email,telefono,sintomas,date
+      paciente,mascota,email,telefono,sintomas,date
     }
+
+    // Validar si es nuevo registro  o actualizacion
+    if(id){
+      //Editando
+      nuevaCita.id=id;
+      // remplazar la información anterior por la actualizada mediante el id
+      const citasActualizadas  = citas.map(citasState=>citasState.id===nuevaCita.id? nuevaCita:citasState);
+      // manda la información
+      setCitas(citasActualizadas);
+      // Borrar el state
+      setCitaActual('');
+    }else{
+      // Nuevo registro
+      // Añadir ID;
+      nuevaCita.id=Date.now()
+      setCitas([...citas,nuevaCita]);
+    }
+    setId('')
     setPaciente('');
     setMascota('')
     setEmail('')
@@ -46,16 +64,25 @@ const Formulario=(props)=>{
     setSintomas('')
     setDate(new Date())
     // una copia de los pacientes actuales y uno nuevo
-
-    setCitas([...citas,nuevaCita]);
-    setModalNuevaCita(false);
+    cerrarNuevaCita();
   }
   return (
       <Modal visible={modalNuevaCita} animationType={"slide"} >
         <SafeAreaView style={styles.container}>
           <ScrollView>
-            <Text style={styles.titulo}>Nueva {''} <Text style={styles.tituloBold}>Cita</Text></Text>
-            <Pressable style={styles.btnCerrar} onPress={()=>setModalNuevaCita(false)}>
+            <Text style={styles.titulo}>{citaActual.id? 'Editar':'Nueva'} {''} <Text style={styles.tituloBold}>Cita</Text></Text>
+            <Pressable style={styles.btnCerrar} onPress={()=>{
+              // Borrar el state
+              setId('')
+              setCitaActual({});
+              setPaciente('');
+              setMascota('')
+              setEmail('')
+              setTelefono('')
+              setSintomas('')
+              setDate(new Date())
+              cerrarNuevaCita()
+            }}>
               <Text style={styles.txtBtnCerrar}>X Cerrar</Text>
             </Pressable>
             {/*CAMPOS*/}
@@ -86,7 +113,7 @@ const Formulario=(props)=>{
               </View>
             </View>
             <Pressable style={styles.botonNuevaCita}  onPress={handleCita}>
-              <Text style={styles.textoNuevaCita}>Guardar cita</Text>
+              <Text style={styles.textoNuevaCita}>{citaActual.id? 'Actualizar Cita':'Nueva Cita'}</Text>
             </Pressable>
           </ScrollView>
         </SafeAreaView>
